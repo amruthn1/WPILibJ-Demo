@@ -7,11 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -19,8 +22,6 @@ import edu.wpi.first.wpilibj.Joystick;
  * directory.
  */
 public class Robot extends TimedRobot {
-  private final DifferentialDrive m_robotDrive =
-      new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
   private final Timer m_timer = new Timer();
   private Joystick j;
   //USB port which Joystick is plugged into
@@ -29,6 +30,24 @@ public class Robot extends TimedRobot {
   int axis;
   //Create new Human Interface Device Hand
   GenericHID.Hand hand;
+  //Create 4 SpeedControllers for each of the motors
+  SpeedController topRight = new PWMVictorSPX(1);
+  SpeedController topLeft = new PWMVictorSPX(2);
+  SpeedController bottomRight = new PWMVictorSPX(3);
+  SpeedController bottomLeft = new PWMVictorSPX(4);
+  //Create 2 SpeedControllerGroups
+  SpeedControllerGroup right = new SpeedControllerGroup(topRight, bottomRight);
+  SpeedControllerGroup left = new SpeedControllerGroup(topLeft, bottomLeft);
+  //Create 1 DifferentialDrive
+  DifferentialDrive drive = new DifferentialDrive(left, right);
+  //Construct 1 MecanumDrive
+  MecanumDrive mDrive =  new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
+  //X speed
+  int xSpeed;
+  //Y speed
+  int ySpeed;
+  //Z rotation
+  int zRotation;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -41,6 +60,12 @@ public class Robot extends TimedRobot {
     axis = 5;
     //Initialize new Joystick
     j = new Joystick(port);
+    //X speed
+    xSpeed = 6;
+    //Y speed
+    ySpeed = 7;
+    //zRotation
+    zRotation = 9;
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -55,9 +80,9 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // Drive for 2 seconds
     if (m_timer.get() < 2.0) {
-      m_robotDrive.arcadeDrive(0.5, 0.0); // drive forwards half speed
+      drive.arcadeDrive(0.5, 0.0); // drive forwards half speed
     } else {
-      m_robotDrive.stopMotor(); // stop robot
+      drive.stopMotor(); // stop robot
     }
   }
 
@@ -68,8 +93,12 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_robotDrive.arcadeDrive(j.getY(), j.getX());
+    drive.arcadeDrive(j.getY(), j.getX());
+    //MecanumDrive.driveCartesian() 
+    mDrive.driveCartesian(ySpeed, xSpeed, zRotation);
+
     /*GETTER METHODS FOR JOYSTICK*/
+
     //Get axis type of joystick axis
     j.getAxisType(axis);
     //Return number of axis
