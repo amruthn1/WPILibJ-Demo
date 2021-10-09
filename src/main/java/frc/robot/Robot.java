@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.Spark;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -42,18 +46,39 @@ public class Robot extends TimedRobot {
   DifferentialDrive drive = new DifferentialDrive(left, right);
   //Construct 1 MecanumDrive
   MecanumDrive mDrive =  new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
+  //Talon Motor channel
+  int talonChannel = 3;
+  //Victor Motor channel
+  int victorChannel = 4;
+  //Spark Motor channel
+  int sparkChannel = 5;
+  //Initialize new Talon motor
+  Talon talon = new Talon(talonChannel);
+  //Initalize new Victor motor
+  Victor victor = new Victor(victorChannel);
+  //Initalize new Spark motor
+  Spark spark = new Spark(sparkChannel);
   //X speed
   int xSpeed;
   //Y speed
   int ySpeed;
   //Z rotation
   int zRotation;
+  //Talon speed
+  int talonSpeed;
+  //Victor speed
+  int victorSpeed;
+  //Spark speed
+  int sparkSpeed;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+
+    /* Initialize Joysticks, Ports, Axis, Speeds, Rotations */
+
     //USB port number
     port = 1;
     //Axis number
@@ -66,6 +91,12 @@ public class Robot extends TimedRobot {
     ySpeed = 7;
     //zRotation
     zRotation = 9;
+    //Speed from -1.0-1.0
+    talonSpeed = 1;
+    //Speed from -1.0-1.0
+    victorSpeed = 1;
+    //Speed from -1.0-1.0
+    sparkSpeed = 1;
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -96,6 +127,12 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(j.getY(), j.getX());
     //MecanumDrive.driveCartesian() 
     mDrive.driveCartesian(ySpeed, xSpeed, zRotation);
+    //Set speed of Talon motor
+    talon.set(talonSpeed);
+    //Set speed of Victor motor
+    victor.set(victorSpeed);
+    //Set speed of Spark motor
+    spark.set(sparkSpeed);
 
     /*GETTER METHODS FOR JOYSTICK*/
 
