@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -20,11 +21,14 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends TimedRobot {
   private final DifferentialDrive m_robotDrive =
       new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
-  private final Joystick m_stick = new Joystick(0);
   private final Timer m_timer = new Timer();
-  Joystick j;
+  private Joystick j;
+  //USB port which Joystick is plugged into
   int port;
+  //A joystick axis
   int axis;
+  //Create new Human Interface Device Hand
+  GenericHID.Hand hand;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -64,7 +68,34 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_robotDrive.arcadeDrive(m_stick.getY(), m_stick.getX());
+    m_robotDrive.arcadeDrive(j.getY(), j.getX());
+    /*GETTER METHODS FOR JOYSTICK*/
+    //Get axis type of joystick axis
+    j.getAxisType(axis);
+    //Return number of axis
+    j.getAxisCount();
+    //Get state of top button on joystick. Returns boolean.
+    j.getTop();
+    //Get whether button was pressed since last check. Returns boolean.
+    j.getTopPressed();
+    //Get whether button was released since last check. Returns boolean.
+    j.getTopReleased();
+    //Find twist value of current joystick. Returns double.
+    j.getTwist();
+    //Gets twist axis channel. Returns int.
+    j.getTwistChannel();
+    //Get X value of joystick. Returns double.
+    j.getX(hand);
+    //Get channel of X axis. Returns int.
+    j.getXChannel();
+    //Get Y value of joystick. Returns double. 
+    j.getY(hand);
+    //Get channel of Y axis. Returns int.
+    j.getYChannel();
+    //Get Z value of joystick. Returns double. 
+    j.getZ();
+    //Get channel of Z axis. Returns int.
+    j.getZChannel();
   }
 
   /** This function is called once each time the robot enters test mode. */
